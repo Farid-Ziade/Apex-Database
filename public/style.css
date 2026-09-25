@@ -1,0 +1,204 @@
+body {
+  height: 100vh;
+  width: 100%;
+  font-family: "Times New Roman", Times, serif;
+  font-size: large;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+li {
+  list-style: none;
+}
+.item-container {
+  display: flex;
+  gap: 1em;
+}
+.deleteBtn,
+.editBtn {
+  padding: 2px;
+  border: black solid 0.2px;
+  border-radius: 5%;
+}
+.deleteBtn:hover,
+.editBtn:hover {
+  background-color: red;
+  color: white;
+  border: black solid 0.2px;
+  border-radius: 5%;
+}
+
+.timer {
+  position: fixed;
+  bottom: 20px;
+  right: 40px;
+}
+.firstMessage,
+.lastMessage {
+  color: red;
+  font-size: 12px;
+  margin-left: 4px;
+  white-space: nowrap;
+}
+.warning {
+  border: 2px solid red;
+}
+
+.warning:focus {
+  outline: 2px solid red;
+  border: 2px solid red;
+}
+
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+
+.search {
+  width: 120px;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  width: 100%;
+  background-color: white;
+  z-index: 100;
+}
+
+.search-result {
+  white-space: nowrap;
+}
+
+.table {
+  width: 80%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background-color: white;
+  margin: 0 auto;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 12px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+.table th {
+  background-color: #e5e7eb;
+}
+
+.table button {
+  box-sizing: border-box;
+  max-width: 100%;
+  padding: 8px;
+  white-space: normal;
+}
+
+.user-count {
+  display: inline-block;
+  width: fit-content;
+}
+.duplicate-message {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.delete-dialog {
+  width: min(400px, 90vw);
+  box-sizing: border-box;
+  padding: 24px;
+  border: none;
+  border-radius: 12px;
+  font-family: Arial, sans-serif;
+}
+
+.delete-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.delete-message {
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.delete-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.cancel-delete {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+
+.confirm-delete {
+  background-color: #b91c1c;
+  color: white;
+}
+
+.user-statistics {
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+.pagination-summary {
+  margin: 16px 0 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #475569;
+}
+
+.pagination,
+.page-numbers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pagination {
+  margin-bottom: 20px;
+}
+
+.pagination button {
+  min-width: 40px;
+  padding: 9px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background-color: white;
+  color: #334155;
+  font: inherit;
+  cursor: pointer;
+}
+
+.pagination button.active-page {
+  color: rgb(0, 0, 0);
+  font-weight: 700;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination button:focus-visible {
+  outline: 2px solid;
+  outline-offset: 3px;
+}

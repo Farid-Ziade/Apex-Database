@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exercice</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header><h1>Exercice</h1></header>
+    <section>
+      <label for="firstname">First Name</label>
+      <input type="text" required class="f_name" />
+      <span class="firstMessage"></span>
+      <label for="lastName">Last Name</label>
+      <input type="text" required class="l_name" />
+      <span class="lastMessage"></span>
+      <label for="">Gender</label>
+      <select name="" id="" class="select">
+        <option value=""></option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <button disabled="disabled" class="save">Save</button>
+      <div class="search-container">
+        <input type="text" class="search" placeholder="Search..." />
+
+        <div class="search-results"></div>
+      </div>
+      <label for="gender-filter">Filter by gender</label>
+      <select id="gender-filter" class="gender-filter">
+        <option value="all">All</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <button type="button" class="delete-all">Delete all</button>
+      <p class="user-count">totalUser 0</p>
+      <p class="user-statistics">Male: 0 · Female: 0</p>
+      <p class="duplicate-message" role="alert"></p>
+    </section>
+    <section class="container">
+      <table class="table"></table>
+      <p class="pagination-summary"></p>
+
+      <nav class="pagination">
+        <button type="button" class="previous-page" disabled>Previous</button>
+
+        <div class="page-numbers"></div>
+
+        <button type="button" class="next-page" disabled>Next</button>
+      </nav>
+      <p class="timer"></p>
+    </section>
+
+    <dialog class="delete-dialog">
+      <h2 id="delete-title">Delete user?</h2>
+      <p id="delete-message" class="delete-message"></p>
+
+      <div class="delete-actions">
+        <button type="button" class="cancel-delete" autofocus>Cancel</button>
+        <button type="button" class="confirm-delete">Delete</button>
+      </div>
+    </dialog>
+    <script src="script.js"></script>
+  </body>
+</html>
