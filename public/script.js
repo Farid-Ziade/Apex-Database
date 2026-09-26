@@ -1,5 +1,3 @@
-import { response } from "express";
-
 let first = document.querySelector(".f_name");
 let last = document.querySelector(".l_name");
 let select = document.querySelector(".select");
@@ -26,7 +24,8 @@ let pageNumbers = document.querySelector(".page-numbers");
 /////////////////////////
 
 let gender = "";
-let usersList = JSON.parse(localStorage.getItem("user"));
+let usersList;
+let userId;
 let firstNameAscending = true;
 let lastNameAscending = true;
 let sortField = "";
@@ -37,6 +36,47 @@ let currentPage = 1;
 let usersPerPage = 5;
 
 ////////////////////////
+
+async function getUser() {
+  const response = await fetch("/users");
+  const data = await response.json();
+  usersList = data;
+  console.log("whatever", usersList);
+}
+
+async function createUsers(user) {
+  const response = await fetch("/users", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+
+  const data = await response.json();
+
+  return data.id;
+}
+async function updateUser(userID, userObject) {
+  await fetch(`/users/${userID}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userObject),
+  });
+}
+async function deleteUser(userID) {
+  await fetch(`/users/${userID}`, {
+    method: "DELETE",
+  });
+}
+async function deleteAllUsers() {
+  await fetch("/users", {
+    method: "DELETE",
+  });
+}
+/////////////////////////////////////
 
 if (!Array.isArray(usersList)) {
   usersList = [];
@@ -85,7 +125,7 @@ save.addEventListener("click", () => {
   save.disabled = true;
 });
 
-function LocalSave() {
+async function LocalSave() {
   let firstName = first.value.trim();
   let lastName = last.value.trim();
 
@@ -103,7 +143,7 @@ function LocalSave() {
   };
 
   usersList.push(users);
-  localStorage.setItem("user", JSON.stringify(usersList));
+  await createUsers(users);
 
   return true;
 }
@@ -235,7 +275,10 @@ function createUser(pageUsers) {
   if (sortField !== "") {
     let sortedHeader = sortField === "firstname" ? firstHeader : lastHeader;
 
-    sortedHeader.setAttribute(sortAscending ? "ascending" : "descending");
+    sortedHeader.setAttribute(
+      "data-sort",
+      sortAscending ? "ascending" : "descending",
+    );
   }
 
   headerRow.appendChild(firstHeader);
@@ -360,7 +403,7 @@ function createUser(pageUsers) {
       editTd.innerHTML = "";
       editTd.appendChild(editSaveButton);
 
-      editSaveButton.addEventListener("click", () => {
+      editSaveButton.addEventListener("click", async () => {
         let firstName = firstInput.value.trim();
         let lastName = lastInput.value.trim();
         let index = usersList.indexOf(user);
@@ -374,13 +417,12 @@ function createUser(pageUsers) {
           duplicateMessage.textContent = "This user already exists.";
           return;
         }
-
-        duplicateMessage.textContent = "";
-
         usersList[index].firstname = firstName;
         usersList[index].lastName = lastName;
+        const { _id, ...updatedUser } = usersList[index];
 
-        localStorage.setItem("user", JSON.stringify(usersList));
+        await updateUser(_id, updatedUser);
+        duplicateMessage.textContent = "";
 
         updateFilters();
         startTimer();
@@ -428,14 +470,15 @@ function updateUserCount() {
 cancelDeleteButton.addEventListener("click", () => {
   deleteDialog.close();
 });
-
-confirmDeleteButton.addEventListener("click", () => {
+confirmDeleteButton.addEventListener("click", async () => {
   let index = usersList.indexOf(userToDelete);
 
   if (index !== -1) {
-    usersList.splice(index, 1);
+    const userID = usersList[index]._id;
 
-    localStorage.setItem("user", JSON.stringify(usersList));
+    await deleteUser(userID);
+
+    usersList.splice(index, 1);
   }
 
   updateFilters();
@@ -447,11 +490,10 @@ deleteDialog.addEventListener("close", () => {
   startTimer();
 });
 
-deleteAllButton.addEventListener("click", () => {
+deleteAllButton.addEventListener("click", async () => {
+  await deleteAllUsers();
   usersList.length = 0;
   currentPage = 1;
-
-  localStorage.setItem("user", JSON.stringify(usersList));
 
   updateFilters();
 
@@ -477,92 +519,32 @@ function startTimer() {
     return;
   }
 
-  let i = 60;
+  let i = 200;
 
   timer.textContent = `The local storage will get deleted in ${i}`;
 
-  countdown = setInterval(() => {
+  countdown = setInterval(async () => {
     i--;
 
     timer.textContent = `The local storage will get deleted in ${i}`;
 
     if (i <= 0) {
       clearInterval(countdown);
-
-      localStorage.removeItem("user");
+      await deleteAllUsers();
 
       usersList = [];
       currentPage = 1;
 
       updateFilters();
 
-      timer.textContent = "Local storage deleted";
+      timer.textContent = "All users deleted from the database";
     }
   }, 1000);
 }
 
-updateFilters();
-startTimer();
-
-async function sendUser(user) {
-  await fetch("/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  });
+async function startApp() {
+  await getUser();
+  updateFilters();
+  startTimer();
 }
-
-async function getUser() {
-  const response = await fetch("/users");
-  const users = response.json();
-  return users;
-}
-
-async function updateUser(first, updatedUser) {
-  (await fetch(`users/${first}`),
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedUser),
-    });
-}
-async function deleteUser(first) {
-  (await fetch(`users/${first}`),
-    {
-      method: "DELETE",
-    });
-}
-
-async function giveUser(user) {
-  await fetch("/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  });
-}
-
-async function tawer(first, user) {
-  await fetch(`/users/${first}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  });
-}
-async function ma7e(id) {
-  await fetch(`users/${id}`, {
-    method: "DELETE",
-  });
-}
-async function jib() {
-  const response = fetch("/users");
-  const users = await response.json();
-  return users;
-}
+startApp();

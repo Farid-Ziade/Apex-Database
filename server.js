@@ -1,7 +1,7 @@
 import express from "express";
-import "dotenv.config()";
+import "dotenv/config";
 
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const app = express();
 app.use(express.json());
@@ -28,29 +28,48 @@ export async function disconnectFromMongoDB() {
   await client.close();
 }
 
-app.post("/users", async (req, res) => {
-  const user = req.body;
-  await userCollection.insertOne(user);
-  res.json({ message: "user added " });
-});
 app.get("/users", async (req, res) => {
   const users = await userCollection.find().toArray();
+
   res.json(users);
 });
-app.put("/users/:firstname", async (req, res) => {
-  const firstname = req.params.firstname;
+app.post("/users", async (req, res) => {
+  const user = req.body;
+
+  const result = await userCollection.insertOne(user);
+
+  res.json({
+    message: "User added",
+    id: result.insertedId,
+  });
+});
+app.delete("/users/:id", async (req, res) => {
+  const id = req.params.id;
+
+  await userCollection.deleteOne({
+    _id: new ObjectId(id),
+  });
+
+  res.json({ message: "User deleted" });
+});
+app.put("/users/:id", async (req, res) => {
+  const id = req.params.id;
   const updatedUser = req.body;
+
   await userCollection.updateOne(
-    {
-      firstname: firstname,
-    },
+    { _id: new ObjectId(id) },
     { $set: updatedUser },
   );
-  res.json({ message: "user updated" });
+
+  res.json({ message: "User updated" });
 });
-app.delete("/users/:firstname", async (req, res) => {
-  const firstname = req.params.firstname;
-  await userCollection.deleteOne({ firstname: firstname });
-  res.json({ message: "user deleted " });
+app.delete("/users", async (req, res) => {
+  try {
+    await userCollection.deleteMany({});
+
+    res.status(200).json({ message: "All users deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting users" });
+  }
 });
 connectToMongoDB();
