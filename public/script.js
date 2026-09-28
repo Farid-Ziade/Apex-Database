@@ -142,8 +142,11 @@ async function LocalSave() {
     gender: gender,
   };
 
+  const id = await createUsers(users);
+
+  users._id = id;
+
   usersList.push(users);
-  await createUsers(users);
 
   return true;
 }
@@ -421,8 +424,8 @@ function createUser(pageUsers) {
         usersList[index].lastName = lastName;
         const { _id, ...updatedUser } = usersList[index];
 
-        await updateUser(_id, updatedUser);
         duplicateMessage.textContent = "";
+        await updateUser(_id, updatedUser);
 
         updateFilters();
         startTimer();
@@ -476,9 +479,8 @@ confirmDeleteButton.addEventListener("click", async () => {
   if (index !== -1) {
     const userID = usersList[index]._id;
 
-    await deleteUser(userID);
-
     usersList.splice(index, 1);
+    await deleteUser(userID);
   }
 
   updateFilters();
@@ -542,6 +544,28 @@ function startTimer() {
   }, 1000);
 }
 
+async function getToken() {
+  const response = await fetch("/api/auth/token", {
+    method: "POST",
+  });
+
+  const data = await response.json();
+
+  return data.token;
+}
+async function getUsers() {
+  const token = await getToken();
+
+  const response = await fetch("/api/users", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const users = await response.json();
+
+  console.log(users);
+}
 async function startApp() {
   await getUser();
   updateFilters();
